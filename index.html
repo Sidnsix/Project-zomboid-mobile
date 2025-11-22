@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Project Zomboid Mobile — Download</title>
+  <style>
+    :root{
+      --glass: rgba(255,255,255,0.06);
+      --accent: linear-gradient(90deg,#7ee8fa,#eec0c6,#c7ffd8);
+      --card-bg: rgba(255,255,255,0.04);
+      --text: #e8f5e9;
+      --muted: rgba(255,255,255,0.6);
+    }
+    html,body{height:100%;margin:0;font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background: linear-gradient(120deg,#022c2c 10%, #0d5 40%, #f8f6a6 100%);}
+    /* animated background overlay */
+    .bg-anim{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(circle at 15% 20%, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.0) 30%), linear-gradient(120deg,#022c2c 10%, #0d5 40%, #f8f6a6 100%);filter:blur(0px);transition:transform 8s linear;}
+    @keyframes bgShift{0%{transform:translateY(0) rotate(0);}50%{transform:translateY(-6px) rotate(1deg);}100%{transform:translateY(0) rotate(0);}}
+    .bg-anim.animate{animation:bgShift 12s infinite alternate ease-in-out;}
+
+    /* container */
+    .wrap{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:28px;gap:18px;position:relative;z-index:5;opacity:0;transform:translateY(18px) scale(0.995);transition:all 700ms cubic-bezier(.2,.9,.2,1);}    
+    .wrap.show{opacity:1;transform:none}
+
+    header{width:100%;display:flex;align-items:center;gap:14px}
+    .logo{display:flex;align-items:center;gap:12px}
+    .logo img{width:78px;height:78px;object-fit:contain;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,0.35)}
+    .title{display:flex;flex-direction:column}
+    .title h1{margin:0;font-size:20px;letter-spacing:1px;background:linear-gradient(90deg,#f0b,#6af);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800}
+    .title p{margin:0;color:var(--muted);font-size:12px}
+
+    main{width:100%;max-width:980px;margin-top:18px}
+    .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+
+    .card{background:var(--card-bg);border-radius:14px;padding:18px;min-height:120px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:inset 0 1px 0 rgba(255,255,255,0.02), 0 10px 30px rgba(3,6,8,0.35);transform:translateY(18px);opacity:0;transition:all 600ms cubic-bezier(.2,.9,.2,1)}
+    .card.show{transform:none;opacity:1}
+    .card h3{margin:0;font-size:20px}
+    .card p{margin:6px 0 0 0;color:var(--muted);font-size:13px}
+
+    .btns{display:flex;gap:12px;flex-wrap:wrap}
+    .btn{padding:10px 14px;border-radius:10px;font-weight:700;border:0;background:linear-gradient(90deg,#ffb86b,#ff7cc4);cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,0.25);transition:transform 200ms ease, box-shadow 200ms;display:inline-block;color:#08101a;text-decoration:none}
+    .btn.secondary{background:linear-gradient(90deg,#8be38b,#6ad7ff)}
+    .btn:hover{transform:translateY(-6px) scale(1.02);box-shadow:0 18px 30px rgba(0,0,0,0.35)}
+
+    .big{grid-column:1/-1;padding:28px;border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:220px}
+    .big .big-title{font-size:46px;margin:0;background:linear-gradient(90deg,#3b3bff,#b86bff);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:900}
+    .big .big-sub{margin:8px 0 0 0;color:var(--muted);font-size:14px}
+
+    .note{margin-top:12px;color:rgba(0,0,0,0.6);font-weight:700}
+
+    footer{width:100%;max-width:980px;margin-top:24px;padding:18px;border-radius:12px;background:rgba(0,0,0,0.06);color:var(--muted);font-size:13px}
+
+    /* responsive */
+    @media(max-width:800px){
+      .grid{grid-template-columns:1fr}
+      .logo img{width:64px;height:64px}
+      .big .big-title{font-size:36px}
+      .btn{width:100%}
+    }
+
+    /* playful word-cloud style accents (from your design) */
+    .word-cloud{position:relative;width:100%;height:160px}
+    .wc-item{position:absolute;font-weight:800;opacity:0.92;transition:transform 400ms ease}
+    .wc-item.t1{left:6%;top:6%;font-size:44px;color:#071a20}
+    .wc-item.t2{right:6%;top:18%;font-size:40px;background:linear-gradient(90deg,#6b6bff,#c86bff);-webkit-background-clip:text;color:transparent}
+    .wc-item.t3{left:22%;top:36%;font-size:24px;color:#ff6b6b}
+    .wc-item.t4{left:44%;top:30%;font-size:64px;background:linear-gradient(90deg,#2b2b66,#6b6bff);-webkit-background-clip:text;color:transparent}
+
+    /* small animations for wc */
+    .wc-item.float{animation:wcFloat 6s infinite ease-in-out}
+    @keyframes wcFloat{0%{transform:translateY(0)}50%{transform:translateY(-6px)}100%{transform:translateY(0)}}
+
+    /* subtle entrance delays */
+    .card.delay-1{transition-delay:120ms}
+    .card.delay-2{transition-delay:240ms}
+    .card.delay-3{transition-delay:360ms}
+    .card.delay-4{transition-delay:480ms}
+
+  </style>
+</head>
+<body>
+  <div class="bg-anim" id="bg"></div>
+  <div class="wrap" id="app">
+    <header>
+      <div class="logo">
+        <!-- local image supplied by user -->
+        <img src="/mnt/data/83634fd1-23e5-421a-a053-0ae68070de95.png" alt="Project Zomboid Mobile"/>
+        <div class="title">
+          <h1>Project Zomboid Mobile</h1>
+          <p>Single-page downloader • Responsive untuk HP • Animasi</p>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="grid">
+        <article class="card delay-1" id="card1">
+          <div>
+            <h3>Installer Zomboid (APK)</h3>
+            <p>Versi zomdroid installer. Klik tombol untuk mengdownload.</p>
+          </div>
+          <div class="btns">
+            <a class="btn" href="https://github.com/liamelui/zomdroid/releases/download/v1.2.0/zomdroid-release-1.2.0.apk" target="_blank" rel="noopener">Download APK</a>
+            <a class="btn secondary" href="https://github.com/liamelui/zomdroid/releases/download/v1.2.0/zomdroid-release-1.2.0.apk" target="_blank" rel="noopener">Open Link</a>
+          </div>
+        </article>
+
+        <article class="card delay-2" id="card2">
+          <div>
+            <h3>Project File</h3>
+            <p>ProjectZomboid.zip (Mediafire) — file project yang berisi asset & konfigurasi.</p>
+          </div>
+          <div class="btns">
+            <a class="btn" href="https://www.mediafire.com/file/pmh6rj4if0d2jws/projectzomboid.zip/file" target="_blank" rel="noopener">Download Project</a>
+            <a class="btn secondary" href="https://www.mediafire.com/file/pmh6rj4if0d2jws/projectzomboid.zip/file" target="_blank" rel="noopener">Open Link</a>
+          </div>
+        </article>
+
+        <article class="card delay-3" id="card3">
+          <div>
+            <h3>FPS Mode (Mods)</h3>
+            <p>File FPS Mods — tingkatkan mode FPS. (Mediafire link dari tutorial).</p>
+          </div>
+          <div class="btns">
+            <a class="btn" href="https://www.mediafire.com/file/vh7p9fqqruauy0k/Fps+Mods.zip/file?dkey=wz3duuz69ha&r=1659" target="_blank" rel="noopener">Download FPS Mods</a>
+            <a class="btn secondary" href="https://www.mediafire.com/file/vh7p9fqqruauy0k/Fps+Mods.zip/file?dkey=wz3duuz69ha&r=1659" target="_blank" rel="noopener">Open Link</a>
+          </div>
+        </article>
+
+        <article class="card delay-4" id="card4">
+          <div>
+            <h3>Tutorial (Indonesia)</h3>
+            <p>Link tutorial YouTube (redirect to MediaFire). Ikuti langkah di video untuk instalasi.</p>
+          </div>
+          <div class="btns">
+            <a class="btn" href="https://www.youtube.com/redirect?event=video_description&redir_token=QUFFLUhqa0FkOC03bnFReWwtcTMwVk1Hb09zRmFRdnlyQXxBQ3Jtc0trREU2VVJoWjhKd3ZWVzQ3cTZRYXNBdmh0bFVvdTRQWDhOVU8zLUl4blNaOFI2Q3g5X1p0VnNLUkdVQkQxRlV1TXJGYTZhS3lNdk92dWJhQVR4enpwTWV3akEyaEVXU3o3aDJNajNJeGNWUVJaWXlGWQ&q=https%3A%2F%2Fwww.mediafire.com%2Ffile%2Fvh7p9fqqruauy0k%2FFps%2BMods.zip%2Ffile%3Fdkey%3Dwz3duuz69ha%26r%3D1659&v=4Y8CyhUrR7Q" target="_blank" rel="noopener">Open Tutorial</a>
+          </div>
+        </article>
+
+        <div class="big card show">
+          <div>
+            <h2 class="big-title">download</h2>
+            <p class="big-sub">Semua link disusun rapi — download sesuai urutan. link Sudah terpercaya!.</p>
+          </div>
+          <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;width:100%">
+            <a class="btn" href="https://github.com/liamelui/zomdroid/releases/download/v1.2.0/zomdroid-release-1.2.0.apk" target="_blank" rel="noopener">APK</a>
+            <a class="btn secondary" href="https://www.mediafire.com/file/pmh6rj4if0d2jws/projectzomboid.zip/file" target="_blank" rel="noopener">Project File</a>
+            <a class="btn" href="https://www.mediafire.com/file/vh7p9fqqruauy0k/Fps+Mods.zip/file?dkey=wz3duuz69ha&r=1659" target="_blank" rel="noopener">FPS Mods</a>
+          </div>
+        </div>
+
+      </section>
+
+      <section style="margin-top:14px">
+        <div class="word-cloud" aria-hidden="true">
+          <div class="wc-item t1 float">project</div>
+          <div class="wc-item t4 float">file link</div>
+          <div class="wc-item t2 float">fps mode</div>
+          <div class="wc-item t3 float">tutorial link</div>
+        </div>
+        <div style="padding:12px 6px;color:#122;">
+          <strong style="color:#0b2">*ini wajib di download semua*</strong>
+        </div>
+      </section>
+
+    </main>
+
+    <footer>
+      <div>Petunjuk singkat: Simpan file yang kamu unduh, aktifkan pengaturan "install from unknown sources" pada Android jika perlu. Aku tidak menyediakan hosting file; link mengarah ke sumber yang kamu kirim.</div>
+    </footer>
+  </div>
+
+  <script>
+    // entrance animation
+    document.addEventListener('DOMContentLoaded',()=>{
+      document.getElementById('app').classList.add('show');
+      document.getElementById('bg').classList.add('animate');
+      // reveal cards sequentially
+      const cards = document.querySelectorAll('.card.delay-1, .card.delay-2, .card.delay-3, .card.delay-4');
+      cards.forEach((c,i)=>{setTimeout(()=>c.classList.add('show'), 220 + i*140)});
+      // tiny parallax on pointer for fun
+      document.addEventListener('mousemove', (e)=>{
+        const bg = document.getElementById('bg');
+        const x = (e.clientX / window.innerWidth - 0.5) * 20;
+        const y = (e.clientY / window.innerHeight - 0.5) * 20;
+        bg.style.transform = `translate(${x}px, ${y}px) rotate(${x/6}deg)`;
+      });
+    });
+  </script>
+</body>
+</html>
